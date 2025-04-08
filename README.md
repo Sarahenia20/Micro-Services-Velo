@@ -18,7 +18,7 @@
 ## :wrench: Installation & Usage
 <br /> 
 - Clone the Master branch <br />
-- Make sure to clean and install all the spring projects <br />
+- Make sure to clean and install all the spring projects for the Mongo projects run npm install <br />
 - Run "docker compose up" <br />
 - Go to http://localhost:8051/ to get the getway and Enjoy ;) <br /><br />
 
