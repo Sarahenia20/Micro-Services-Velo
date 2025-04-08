@@ -1,0 +1,48 @@
+version: "3"
+services:
+    eureka-server:
+        build:
+            context: ./eureka-server  # Update this with the correct path to your Eureka server code
+        image: repo/eureka-server
+        container_name: eureka-container
+        hostname: eureka-server
+        ports:
+            - "8761:8761"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health || exit 0"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 40s
+
+    springboot-app:
+        container_name: association-reclamation-micro-service
+        image: repo/micro-service
+        restart: always
+        build: .
+        ports:
+            - "8081:8081"
+        environment:
+            MYSQL_HOST: mysqldb
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
+            MYSQL_PORT: 3306
+        depends_on:
+            eureka-server:
+                condition: service_healthy
+            mysqldb:
+                condition: service_started
+
+    mysqldb:
+        container_name: mysqldb
+        image: mysql
+        ports:
+            - 3307:3306
+        environment:
+            MYSQL_DATABASE: Velo
+            MYSQL_ROOT_PASSWORD: root
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
